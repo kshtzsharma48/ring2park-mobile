@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<!--
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+-->
+  <head>
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+	<meta charset="utf-8">
+    <title>Ring2Park iphone</title>
+
+    <link rel="stylesheet"  href="css/themes/default/jquery.mobile-1.1.0.css" />
+    <!-- iPad/iPhone specific css below, add after your main css >
+    <link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
+    <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
+    -->
+    <script src="js/jquery.js"></script>
+    <script type="text/javascript">
+        $(document).bind("mobileinit", function(){
+            $.mobile.touchOverflowEnabled = true;
+            $.mobile.allowCrossDomainPages = true;
+        });
+    </script>
+    <script src="js/jquery.mobile-1.1.0.js"></script>
+	<script src="js/cordova-1.8.1.js"></script>
+    <script src="js/ring2park.js"></script>
+    
+  </head>
+  <body onload="onBodyLoad()">
+
+      <div data-role="page" id="login-page">
+          <div data-position="fixed" data-role="header">
+              <h1>Ring2Park</h1>
+          </div>
+          
+          <div data-role="content">
+              <h1>Login:</h1>
+              <form data-ajax="false" id="login-form" action="http://localhost:8080/users/login.json" method="POST">
+                  <div id="response">
+                      All fields in <b>bold</b> are required.
+                  </div>
+                  <div data-role="fieldcontain">
+                      <label for="j_username">Username:*</label>
+                      <input class="required" id="j_username" name="j_username" type="text" value="">          
+                  </div>
+                  <div data-role="fieldcontain">
+                      <label for="j_password">Password:*</label>
+                      <input id="j_password" name="j_password" type="password" value="">          
+                  </div>
+				  <div data-role="fieldcontain">
+					  <fieldset data-role="controlgroup">
+					  	  <legend></legend>
+				  	  	  <label for="remember_me">Remember my details</label>       
+				          <input id="remember_me" name="remember_me" type="checkbox"/>
+				 	  </fieldset>
+				  </div>
+                  <div class="ui-grid-a">
+                      <div class="ui-block-a"> 
+                          <input type="submit" value="Login" id="submit"/>
+                      </div>
+                  </div>
+                </form>
+          </div>
+          
+      </div>
+
+  </body>
+</html>
