@@ -78,10 +78,20 @@ $('#parking-page').live('pageshow', function () {
 			$.each(bookings, function() {
 				var id = this.id;
 				var description = this.description;
-				$("#parking-sessions").append('<li><a href="/booking/"' + id + 
-						'>' + description + '</li>');
-				console.log("Found booking id " + id + " for " + description);
-			});
+				$("#parking-sessions").append(
+					'<li data-corners="false" data-shadow="false" data-iconshadow="true"' +
+					' data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c"' +
+					' class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-first-child ui-btn-up-c">' +
+						'<div class="ui-btn-inner ui-li">' +
+							'<div class="ui-btn-text">' +
+								'<a class="ui-link-inherit" href="/booking/"' + id + '>' +
+								description + 
+								'</a>' +
+							'</div>' +
+							'<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span>' +
+						'</div>' +
+					'</li>');
+			});		
 		},
 		error: function (status) {
 			console.log("Error retrieving locations for " + localStorage.getItem('j_username'));
