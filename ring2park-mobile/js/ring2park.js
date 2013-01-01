@@ -1,4 +1,7 @@
 
+// base URL
+var baseUrl = 'http://localhost:8080';
+	
 // If you want to prevent dragging, uncomment this section
 /*
  function preventBehavior(e) 
@@ -33,82 +36,11 @@ function onDeviceReady()
     //navigator.notification.alert("Cordova is working")
 }
 
-$(document).bind("pageinit", function() {
-	
-	//bind an event handler to the submit event of the login form
-	$('#login-form').live('submit', function (e) {
+//
+// page show actions
+//
 
-		//cache the form element for use in this function
-		var $this = $(this);
-
-		//prevent the default submission of the form
-		e.preventDefault();
-
-		//run an AJAX post request to server-side script, $this.serialize() is the data from the form
-		$.ajax({
-			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
-			complete: function() { $.mobile.hidePageLoadingMsg() }, //hide spinner
-			type: 'POST',  
-			url: $this.attr('action'),
-			data: $this.serialize(),
-			dataType: 'json',
-			success: function (status) {
-				if (status.loggedIn) {
-					// successful login
-					console.log("succesfully logged in as " + $this.find('#j_username').val());
-					$.mobile.changePage("pages/parking.html", { transition: "slideup"} );
-					if ($this.find('#remember_me').is(':checked')) { 
-						// save credentials in local storage
-						localStorage.setItem('remember_me', 'true');
-						localStorage.setItem('j_username', $this.find('#j_username').val());
-						localStorage.setItem('j_password', $this.find('#j_password').val());
-					} else {
-						// clear credentials from local storage
-						localStorage.removeItem('remember_me');
-						localStorage.removeItem('j_username');
-						localStorage.removeItem('j_password');
-					}
-				} else {
-					// failed login
-					$('#response').empty().append("<span class='error'>" + status.message + "</span>");
-				}
-			}
-		});
-	});
-	
-	//bind an event handler to the logout button
-	$('#logout-btn').bind("click", function (e) {
-		
-		//prevent the default submission of the form
-		e.preventDefault();
-		
-		// clear remember_me so we don't auto login
-		localStorage.removeItem('remember_me');
-
-		$.ajax({
-			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
-			complete: function() { $.mobile.hidePageLoadingMsg() }, //hide spinner
-			type: 'POST',  
-			url: 'http://localhost:8080/users/logout.json',
-			dataType: 'json',
-			success: function (status) {
-				if (!status.loggedIn) {
-					// successful logout
-					document.location.href = "../index.html";
-				} else {
-					// failed to logout
-					alert("Error logging out");
-				}
-			},
-			error: function (status) {
-				console.log("Error logging out");
-			}
-		});
-		
-	});
-	
-});
-
+// login page
 $('#login-page').live('pageshow', function () { 
 	
 	// do we have remembered credentials
@@ -131,20 +63,181 @@ $('#login-page').live('pageshow', function () {
 	
 });
 
-$('#account-page').live('pageshow', function () { 
+$('#parking-page').live('pageshow', function () { 
+	
+	// construct url for viewing bookings
+	viewUrl = baseUrl + '/statements/' + localStorage.getItem('j_username') + '/view.json';
 	
 	$.ajax({
 		beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
-		complete: function() { $.mobile.hidePageLoadingMsg() }, //hide spinner
-		type: 'POST',  
-		url: 'http://localhost:8080/users/view.json',
+		complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+		type: 'GET',  
+		url: viewUrl,
 		dataType: 'json',
-		success: function (user) {
-		
+		success: function (bookings) {
+			$.each(bookings, function() {
+				var id = this.id;
+				var description = this.description;
+				$("#parking-sessions").append('<li><a href="/booking/"' + id + 
+						'>' + description + '</li>');
+				console.log("Found booking id " + id + " for " + description);
+			});
 		},
 		error: function (status) {
-			console.log("Error retrieving user");
+			console.log("Error retrieving locations for " + localStorage.getItem('j_username'));
 		}
 	});
 	
 });
+
+// account page
+$('#account-page').live('pageshow', function () { 
+	
+	// construct url for viewing user
+	viewUrl = baseUrl + '/users/' + localStorage.getItem('j_username') + '/view.json';
+	
+	$.ajax({
+		beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+		complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+		type: 'GET',  
+		url: viewUrl,
+		dataType: 'json',
+		success: function (user) {
+			$("#name").val(user.name).val();
+			$("#mobile").val(user.mobile).val();
+			$("#email").val(user.email).val();
+		},
+		error: function (status) {
+			console.log("Error retrieving user " + localStorage.getItem('j_username'));
+		}
+	});
+	
+});
+
+//
+// page form submit actions
+//
+$(document).bind("pageinit", function() {
+	
+	//bind an event handler to the submit event of the login form
+	$('#login-form').live('submit', function (e) {
+
+		//cache the form element for use in this function
+		var $this = $(this);
+
+		//prevent the default submission of the form
+		e.preventDefault();
+
+		// construct url for logout
+		loginUrl = baseUrl + '/users/login.json';
+		
+		//run an AJAX post request to server-side script, $this.serialize() is the data from the form
+		$.ajax({
+			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+			complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+			type: 'POST',  
+			url: loginUrl,
+			data: $this.serialize(),
+			dataType: 'json',
+			success: function (status) {
+				if (status.loggedIn) {
+					// successful login
+					console.log("Succesfully logged in " + $this.find('#j_username').val());
+					$.mobile.changePage("pages/parking.html", { transition: "slideup"} );
+					if ($this.find('#remember_me').is(':checked')) { 
+						// save credentials in local storage
+						localStorage.setItem('remember_me', 'true');
+						localStorage.setItem('j_username', $this.find('#j_username').val());
+						localStorage.setItem('j_password', $this.find('#j_password').val());
+					} else {
+						// save wanted and clear unwanted credentials from local storage
+						localStorage.setItem('j_username', $this.find('#j_username').val());
+						localStorage.removeItem('remember_me');
+						localStorage.removeItem('j_password');
+					}
+				} else {
+					// failed login
+					$('#response').empty().append("<span class='error'>Error logging in: " + status.message + "</span>");
+				}
+			}
+		});
+	});
+	
+	//bind an event handler to the logout button
+	$('#logout-btn').bind("click", function (e) {
+		
+		//prevent the default submission of the form
+		e.preventDefault();
+		
+		// clear remember_me so we don't auto login
+		localStorage.removeItem('remember_me');
+
+		// construct url for logout
+		logoutUrl = baseUrl + '/users/logout.json';
+		
+		$.ajax({
+			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+			complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+			type: 'POST',  
+			url: logoutUrl,
+			dataType: 'json',
+			success: function (status) {
+				if (!status.loggedIn) {
+					// successful logout
+					document.location.href = "../index.html";
+				} else {
+					// failed to logout
+					alert("Error logging out.");
+				}
+			},
+			error: function (status) {
+				console.log("Error logging out user " + localStorage.getItem('j_username'));
+			}
+		});
+		
+	});
+	
+	// bind an event handler to the submit event of the account form
+	$('#account-form').live('submit', function (e) {
+
+		if (e.handled !== true) {
+			//cache the form element for use in this function
+			var $this = $(this);
+
+			//prevent the default submission of the form
+			e.preventDefault();
+
+			// construct url for editing user
+			editUrl = baseUrl + '/users/' + localStorage.getItem('j_username') + '/edit.json';
+			
+			//run an AJAX post request to server-side script, $this.serialize() is the data from the form
+			$.ajax({
+				beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+				complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+				type: 'POST',  
+				url: editUrl,
+				data: $this.serialize(),
+				dataType: 'json',
+				success: function (user) {
+					if (user.username) {
+						// successful update
+						console.log("Sucessfully updated user " + user.username);
+						$('div#response').empty().append("<span class='message'>Your account has been successfully updated.</span>");
+					} else {
+						// failed update
+						$('div#response').empty().append("<span class='error'>There was an error updating your account.</span>");
+					}
+				}
+			});
+			
+		    e.handled = true;
+		}
+		
+		return false;
+		
+	});
+	
+});
+
+
+
