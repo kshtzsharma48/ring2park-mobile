@@ -11,7 +11,7 @@
 
 	<body class="app">
 	
-		<div data-role="page" id="parking-page">
+		<div data-role="page" id="statement-page">
 	
 			<div data-role="header" data-position="fixed">
 				<h1>Parking</h1>
@@ -20,9 +20,34 @@
 			</div>
 	
 			<div data-role="content">
-				<h2>Parking Sessions</h2>
-				<ul data-role="listview" class="ui-listview"></ul>
-				<ul id="parking-sessions" data-role="listview"></ul>
+				<h2>Statement</h2>
+				<form data-ajax="false" id="statement-form">
+					<div id="response">The details of this parking session are as follows.</div>
+					<div data-role="fieldcontain">
+						<label for="location">Location:</label> <input class="readonly" id="location"
+							name="location" type="text" value="" />
+					</div>
+					<div data-role="fieldcontain">
+						<label for="start-date">Start Date:</label> <input class="readonly"
+							id="start-date" name="start-date" type="text" value="" readonly="readonly" />
+					</div>
+					<div data-role="fieldcontain">
+						<label for="end-date">End Date:</label> <input class="readonly"
+							id="end-date" name="end-date" type="text" value="" />
+					</div>
+					<div data-role="fieldcontain">
+						<label for="cost">Cost:</label> <input class="readonly"
+							id="cost" name="cost" type="text" value="" />
+					</div>
+					<div class="ui-grid-a">
+						<div class="ui-block-a">
+							<input type="submit" value="Back" id="back" />
+						</div>
+						<div class="ui-block-a">
+							<input type="submit" value="Book Again" id="submit" />
+						</div>
+					</div>
+				</form>
 			</div>
 	
 			<div data-role="footer" data-id="footer" data-position="fixed">

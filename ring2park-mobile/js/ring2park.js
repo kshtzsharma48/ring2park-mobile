@@ -1,6 +1,6 @@
 
 // base URL
-var baseUrl = 'http://localhost:8080';
+var baseUrl = 'http://10.0.1.14:8080';
 	
 // If you want to prevent dragging, uncomment this section
 /*
@@ -76,16 +76,14 @@ $('#parking-page').live('pageshow', function () {
 		dataType: 'json',
 		success: function (bookings) {
 			$.each(bookings, function() {
-				var id = this.id;
-				var description = this.description;
 				$("#parking-sessions").append(
 					'<li data-corners="false" data-shadow="false" data-iconshadow="true"' +
 					' data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c"' +
 					' class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-first-child ui-btn-up-c">' +
 						'<div class="ui-btn-inner ui-li">' +
 							'<div class="ui-btn-text">' +
-								'<a class="ui-link-inherit" href="/booking/"' + id + '>' +
-								description + 
+								'<a class="ui-link-inherit" href="statement.html?id=' + this.id + '">' +
+								this.description + 
 								'</a>' +
 							'</div>' +
 							'<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span>' +
@@ -119,6 +117,35 @@ $('#account-page').live('pageshow', function () {
 		},
 		error: function (status) {
 			console.log("Error retrieving user " + localStorage.getItem('j_username'));
+		}
+	});
+	
+});
+
+//statement page
+$('#statement-page').live('pageshow', function () { 
+	
+	var query = $(this).data("url").split("?")[1];
+	var id = query.replace("id=","");
+	console.log("Viewing parking statement " + id);
+	
+	// construct url for viewing statement
+	statementUrl = baseUrl + '/statements/' + id + '/details.json';
+	
+	$.ajax({
+		beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+		complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+		type: 'GET',  
+		url: statementUrl,
+		dataType: 'json',
+		success: function (statement) {
+			$("#location").val(statement.location.name).val();
+			$("#start-date").val(statement.startDate).val();
+			$("#end-date").val(statement.endDate).val();
+			$("#cost").val(statement.total).val();
+		},
+		error: function (status) {
+			console.log("Error retrieving statement " + id);
 		}
 	});
 	
@@ -247,7 +274,80 @@ $(document).bind("pageinit", function() {
 		
 	});
 	
+	// bind an event handler to the submit event of the statement form
+	$('#statement-form').live('submit', function (e) {
+
+		if (e.handled !== true) {
+			//cache the form element for use in this function
+			var $this = $(this);
+			console.log($this);
+
+			//prevent the default submission of the form
+			e.preventDefault();
+
+			// construct url for editing user
+			//editUrl = baseUrl + '/users/' + localStorage.getItem('j_username') + '/edit.json';
+			
+			//run an AJAX post request to server-side script, $this.serialize() is the data from the form
+			/*$.ajax({
+				beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+				complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+				type: 'POST',  
+				url: editUrl,
+				data: $this.serialize(),
+				dataType: 'json',
+				success: function (user) {
+					if (user.username) {
+						// successful update
+						console.log("Sucessfully updated user " + user.username);
+						$('div#response').empty().append("<span class='message'>Your account has been successfully updated.</span>");
+					} else {
+						// failed update
+						$('div#response').empty().append("<span class='error'>There was an error updating your account.</span>");
+					}
+				}
+			});*/
+			
+		    e.handled = true;
+		}
+		
+		return false;
+		
+	});
+	
 });
+
+var app = {
+	    // Application Constructor
+	    initialize: function() {
+	        this.bindEvents();
+	    },
+	    // Bind Event Listeners
+	    //
+	    // Bind any events that are required on startup. Common events are:
+	    // 'load', 'deviceready', 'offline', and 'online'.
+	    bindEvents: function() {
+	        document.addEventListener('deviceready', this.onDeviceReady, false);
+	    },
+	    // deviceready Event Handler
+	    //
+	    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+	    // function, we must explicity call 'app.receivedEvent(...);'
+	    onDeviceReady: function() {
+	        app.receivedEvent('deviceready');
+	    },
+	    // Update DOM on a Received Event
+	    receivedEvent: function(id) {
+	        var parentElement = document.getElementById(id);
+	        var listeningElement = parentElement.querySelector('.listening');
+	        var receivedElement = parentElement.querySelector('.received');
+
+	        listeningElement.setAttribute('style', 'display:none;');
+	        receivedElement.setAttribute('style', 'display:block;');
+
+	        console.log('Received Event: ' + id);
+	    }
+	};
 
 
 
