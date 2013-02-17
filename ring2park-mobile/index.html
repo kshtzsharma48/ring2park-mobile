@@ -31,13 +31,13 @@
 					<div data-role="fieldcontain">
 						<fieldset data-role="controlgroup">
 							<legend></legend>
-							<label for="remember_me">Remember my details</label> <input
-								id="remember_me" name="remember_me" type="checkbox" />
+							<label for="remember_me">Remember my details</label> 
+							<input id="remember_me" name="remember_me" type="checkbox" />
 						</fieldset>
 					</div>
 					<div class="ui-grid-a">
 						<div class="ui-block-a">
-							<input type="submit" value="Login" id="submit" />
+							<input type="submit" data-inline="true" value="Login" id="submit" />
 						</div>
 					</div>
 				</form>
@@ -45,16 +45,19 @@
 	
 		</div>
 	
-		<script src="js/jquery.js"></script>
-		<script src="js/jquery.mobile-1.2.0.js"></script>
-	    <script type="text/javascript" src="cordova-2.2.0.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/jquery.mobile-1.2.0.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true" ></script>
+		<script type="text/javascript" src="js/jquery.ui.map.full.min.js"></script>
+	    <script type="text/javascript" src="js/cordova-2.2.0.js"></script>
+	    <script type="text/javascript" src="js/device.js"></script>
 	    <script type="text/javascript" src="js/ring2park.js"></script>
 	    <script type="text/javascript">
 		    $(document).bind( "mobileinit", function() {
 		        $.support.cors = true;
 		        $.mobile.allowCrossDomainPages = true; 
 		    });
-	        app.initialize();
+	        init();
 	    </script>
 	    
 	</body>

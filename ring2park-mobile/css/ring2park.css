@@ -48,3 +48,14 @@ body {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
+
+.nav-icons .ui-btn .ui-btn-inner { padding-top: 40px !important; }
+.nav-icons .ui-btn .ui-icon { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }
+#book .ui-icon { background:  url(../css/images/icons/80-shopping-cart.png) 50% 50% no-repeat; background-size: 26px 19px; }
+#sessions .ui-icon { background:  url(../css/images/icons/83-calendar.png) 50% 50% no-repeat; background-size: 26px 19px;  }
+#map .ui-icon { background:  url(../css/images/icons/103-map.png) 50% 50% no-repeat;  background-size: 26px 21px; }
+#account .ui-icon { background:  url(../css/images/icons/123-id-card.png) 50% 50% no-repeat;  background-size: 24px 17px; }
+#info .ui-icon { background:  url(../css/images/icons/180-stickynote.png) 50% 50% no-repeat;  background-size: 22px 22px; }
+#book-again .ui-icon { background:  url(../css/images/icons/80-shopping-cart.png) 50% 50% no-repeat;  background-size: 26px 19px; }
+
+

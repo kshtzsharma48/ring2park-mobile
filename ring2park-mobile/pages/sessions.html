@@ -8,29 +8,32 @@
 		<link rel="stylesheet" href="css/ring2park.css" />
         <title>Ring2Park Mobile</title>
 	</head>
-	
+
 	<body class="app">
 	
-		<div data-role="page" id="map-page">
+		<div data-role="page" id="sessions-page">
 	
 			<div data-role="header" data-position="fixed">
-				<h1>Map</h1>
-				<a href="" data-icon="search" data-iconpos="notext" data-rel="dialog"
-					data-transition="fade">Search</a>
+				<h1>Sessions</h1>
 			</div>
 	
 			<div data-role="content">
-				<div id="map" style="padding:1.0em;margin: 0 auto">
-					<div id="map_canvas"></div>
+				<ul id="parking-sessions" data-role="listview" data-filter="true" data-split-icon="gear"
+					data-autodividers="true" data-split-theme="d" class="ui-listview"></ul>
+				<div data-role="popup" id="book" data-theme="d" data-overlay-theme="b" class="ui-content" style="max-width:340px;">
+					<h3>Park Again?</h3>
+					<p>Do you wish to park again at the same location.</p>
+					<a id="book-again-btn" href="" data-role="button" data-rel="back" data-theme="b" data-icon="check" data-inline="true" data-mini="true">Yes</a>
+					<a href="" data-role="button" data-rel="back" data-inline="true" data-mini="true">No</a>	
 				</div>
 			</div>
-	
+
 			<div data-role="footer" data-id="footer" class="nav-icons" data-position="fixed">
 				<div data-role="navbar" class="nav-icons" data-grid="d">
 					<ul >
 						<li><a href="../pages/book.html" id="book" data-icon="custom">Book</a></li>
-						<li><a href="../pages/sessions.html" id="sessions" data-icon="custom">Sessions</a></li>
-						<li><a href="../pages/map.html" id="map" data-icon="custom" class="ui-btn-active">Map</a></li>
+						<li><a href="../pages/sessions.html" id="sessions" data-icon="custom" class="ui-btn-active">Sessions</a></li>
+						<li><a href="../pages/map.html" id="map" data-icon="custom">Map</a></li>
 						<li><a href="../pages/account.html" id="account" data-icon="custom">Account</a></li>
 						<li><a href="../pages/info.html" id="info" data-icon="custom">Info</a></li>
 					</ul>
@@ -38,6 +41,6 @@
 			</div>
 	
 		</div>
-	
+		
 	</body>
 </html>

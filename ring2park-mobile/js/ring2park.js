@@ -1,40 +1,12 @@
 
 // base URL
 var baseUrl = 'http://10.0.1.14:8080';
-	
-// If you want to prevent dragging, uncomment this section
-/*
- function preventBehavior(e) 
- { 
- e.preventDefault(); 
- };
- document.addEventListener("touchmove", preventBehavior, false);
- */
 
-/* If you are supporting your own protocol, the var invokeString will contain any arguments to the app launch.
- see http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
- for more details -jm */
-/*
- function handleOpenURL(url)
- {
- // TODO: do something with the url passed in.
- }
- */
-
-function onBodyLoad()
-{		
-    document.addEventListener("deviceready", onDeviceReady, false);
-}
-
-/* When this function is called, Cordova has been initialized and is ready to roll */
-/* If you are supporting your own protocol, the var invokeString will contain any arguments to the app launch.
- see http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
- for more details -jm */
-function onDeviceReady()
-{
-    // do your thing!
-    //navigator.notification.alert("Cordova is working")
-}
+// viewport width and height
+var viewport = {
+	width  : $(window).width(),
+	height : $(window).height()
+};	
 
 //
 // page show actions
@@ -63,7 +35,41 @@ $('#login-page').live('pageshow', function () {
 	
 });
 
-$('#parking-page').live('pageshow', function () { 
+//booking page
+$('#book-page').live('pageshow', function () { 
+	
+	var query = $(this).data("url").split("?")[1];
+	var id = query.replace("id=","");
+	
+	if (id.length > 0) {
+		$('#location-id-div').hide();
+		
+		console.log("Booking parking for " + id);		
+		// construct url for getting parking location
+		locationsUrl = baseUrl + '/locations/' + id + '/details.json';
+		
+		$.ajax({
+			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+			complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+			type: 'GET',  
+			url: statementUrl,
+			dataType: 'json',
+			success: function (location) {
+				$("#location").val(location.name).val();
+			},
+			error: function (status) {
+				console.log("Error retrieving location " + id);
+			}
+		});
+	} else {
+		$('#location-div').hide();
+		
+		console.log("Booking parking");
+	}
+	
+});
+
+$('#sessions-page').live('pageshow', function () { 
 	
 	// construct url for viewing bookings
 	viewUrl = baseUrl + '/statements/' + localStorage.getItem('j_username') + '/view.json';
@@ -74,25 +80,42 @@ $('#parking-page').live('pageshow', function () {
 		type: 'GET',  
 		url: viewUrl,
 		dataType: 'json',
-		success: function (bookings) {
-			$.each(bookings, function() {
+		success: function (sessions) {
+			$.each(sessions, function() {				
 				$("#parking-sessions").append(
-					'<li data-corners="false" data-shadow="false" data-iconshadow="true"' +
-					' data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c"' +
-					' class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-first-child ui-btn-up-c">' +
-						'<div class="ui-btn-inner ui-li">' +
+					'<li data-wrapperels="div" data-corners="false" data-shadow="false" data-iconshadow="true" ' +
+					' data-icon="false" data-iconpos="right" data-theme="c"' +
+					' class="ui-btn ui-btn-icon-right ui-li ui-li-has-alt ui-li-has-thumb ui-first-child ui-btn-up-c">' +
+						'<div class="ui-btn-inner ui-li ui-li-has-alt">' +
 							'<div class="ui-btn-text">' +
-								'<a class="ui-link-inherit" href="statement.html?id=' + this.id + '">' +
-								this.description + 
+							    '<a class="ui-link-inherit" href="../pages/statement.html?id=' + this.id + '">' +
+									'<h3 class="ui-li-heading">' + this.vehicle.license + '</h3>' +
+									'<p class="ui-li-desc">' + this.description + '</p>' +
 								'</a>' +
 							'</div>' +
-							'<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span>' +
 						'</div>' +
+						'<a aria-owns="#book" aria-haspopup="true" data-theme="c" data-iconpos="notext"' + 
+							'data-icon="false" data-wrapperels="span" data-iconshadow="true" data-shadow="false"' + 
+							'data-corners="false" class="ui-li-link-alt ui-btn ui-btn-up-c ui-btn-icon-notext"' + 
+							'title="Park Again" href="#book" data-rel="popup" data-position-to="window"' + 
+							'data-transition="pop">' +
+							'<span class="ui-btn-inner">' +
+								'<span class="ui-btn-text"></span>' +
+								'<span class="ui-btn ui-btn-up-d ui-shadow ui-btn-corner-all ui-btn-icon-notext" title=""' + 
+									'data-theme="d" data-iconpos="notext" data-icon="custom" data-wrapperels="span"' +
+									'data-iconshadow="true" data-shadow="true" data-corners="true">' +
+									'<span class="ui-btn-inner">' +
+										'<span class="ui-btn-text">Park Again</span>' +
+										'<span class="ui-icon ui-icon-gear ui-icon-shadow">&nbsp;</span>' +
+									'</span>' + 
+								'</span>' +	
+							'</span>' +
+						'</a>' +
 					'</li>');
 			});		
 		},
 		error: function (status) {
-			console.log("Error retrieving locations for " + localStorage.getItem('j_username'));
+			console.log("Error retrieving parking sessions for " + localStorage.getItem('j_username'));
 		}
 	});
 	
@@ -151,6 +174,26 @@ $('#statement-page').live('pageshow', function () {
 	
 });
 
+// map page
+$('#map-page').live('pageshow', function() {
+	$('#map_canvas').gmap('refresh');
+});
+$('#map-page').live("pageinit", function() {
+	$('#map_canvas').width(viewport.width);
+	$('#map_canvas').height(viewport.height);
+	$('#map_canvas').gmap().bind('init', function(evt, map) {
+		var geoLoc = geoLocation.longitude + "," + geoLocation.latitude;
+		console.log("Current geolocation is " + geoLoc);
+        $('#map_canvas').gmap({ 'center': geoLoc,'scrollwheel':false});
+        $('#map_canvas').gmap('option', 'mapTypeId', google.maps.MapTypeId.SATELLITE);
+        $('#map_canvas').gmap('option', 'zoom', 7);
+		$('#map_canvas').gmap('addMarker', {'position': geoLoc, 'bounds': true}).click(function() {
+			$('#map_canvas').gmap('openInfoWindow', {'content': 'You are here!'}, this);
+		});
+	});
+});
+
+
 //
 // page form submit actions
 //
@@ -180,7 +223,7 @@ $(document).bind("pageinit", function() {
 				if (status.loggedIn) {
 					// successful login
 					console.log("Succesfully logged in " + $this.find('#j_username').val());
-					$.mobile.changePage("pages/parking.html", { transition: "slideup"} );
+					$.mobile.changePage("pages/sessions.html", { transition: "slideup"} );
 					if ($this.find('#remember_me').is(':checked')) { 
 						// save credentials in local storage
 						localStorage.setItem('remember_me', 'true');
@@ -284,29 +327,8 @@ $(document).bind("pageinit", function() {
 
 			//prevent the default submission of the form
 			e.preventDefault();
-
-			// construct url for editing user
-			//editUrl = baseUrl + '/users/' + localStorage.getItem('j_username') + '/edit.json';
 			
-			//run an AJAX post request to server-side script, $this.serialize() is the data from the form
-			/*$.ajax({
-				beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
-				complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
-				type: 'POST',  
-				url: editUrl,
-				data: $this.serialize(),
-				dataType: 'json',
-				success: function (user) {
-					if (user.username) {
-						// successful update
-						console.log("Sucessfully updated user " + user.username);
-						$('div#response').empty().append("<span class='message'>Your account has been successfully updated.</span>");
-					} else {
-						// failed update
-						$('div#response').empty().append("<span class='error'>There was an error updating your account.</span>");
-					}
-				}
-			});*/
+			$.mobile.changePage("pages/book.html?id=", { transition: "slideup"} );
 			
 		    e.handled = true;
 		}
@@ -315,39 +337,18 @@ $(document).bind("pageinit", function() {
 		
 	});
 	
+	//bind an event handler to the park again button
+	$('#book-again-btn').bind("click", function (e) {
+		
+		//prevent the default submission of the form
+		e.preventDefault();
+		
+		$.mobile.changePage("../pages/book.html?id=", { transition: "slideup"} );
+		console.log("Parking again");
+		
+	});
+	
 });
-
-var app = {
-	    // Application Constructor
-	    initialize: function() {
-	        this.bindEvents();
-	    },
-	    // Bind Event Listeners
-	    //
-	    // Bind any events that are required on startup. Common events are:
-	    // 'load', 'deviceready', 'offline', and 'online'.
-	    bindEvents: function() {
-	        document.addEventListener('deviceready', this.onDeviceReady, false);
-	    },
-	    // deviceready Event Handler
-	    //
-	    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-	    // function, we must explicity call 'app.receivedEvent(...);'
-	    onDeviceReady: function() {
-	        app.receivedEvent('deviceready');
-	    },
-	    // Update DOM on a Received Event
-	    receivedEvent: function(id) {
-	        var parentElement = document.getElementById(id);
-	        var listeningElement = parentElement.querySelector('.listening');
-	        var receivedElement = parentElement.querySelector('.received');
-
-	        listeningElement.setAttribute('style', 'display:none;');
-	        receivedElement.setAttribute('style', 'display:block;');
-
-	        console.log('Received Event: ' + id);
-	    }
-	};
 
 
 

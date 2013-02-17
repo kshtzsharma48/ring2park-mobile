@@ -9,13 +9,21 @@ var deviceInfo = function() {
     document.getElementById("colorDepth").innerHTML = screen.colorDepth;
 };
 
+var geoLocation = {
+	longitude: "51.4775",
+	latitude: "-0.4614"
+};
+
 var getLocation = function() {
-    var suc = function(p) {
-        alert(p.coords.latitude + " " + p.coords.longitude);
+    var locSuc = function(p) {
+    	geoLocation.longitude = p.coords.longitude;
+    	geoLocation.latitude = p.coords.latitude;
+        console.log("Found gelocation: " + location.latitude + " " + location.longitude);
     };
     var locFail = function() {
+    	console.log("Could not find geolocation");
     };
-    navigator.geolocation.getCurrentPosition(suc, locFail);
+    navigator.geolocation.getCurrentPosition(locSuc, locFail);
 };
 
 var beep = function() {
@@ -140,8 +148,12 @@ function toggleCompass() {
 }
 
 function init() {
+	console.log("in init");
     // the next line makes it impossible to see Contacts on the HTC Evo since it
     // doesn't have a scroll button
     // document.addEventListener("touchmove", preventBehavior, false);
     document.addEventListener("deviceready", deviceInfo, true);
+    document.addEventListener("deviceready", getLocation, true);
 }
+
+

@@ -11,36 +11,38 @@
 
 	<body class="app">
 	
-		<div data-role="page" id="account-page">
+		<div data-role="page" id="book-page">
 			
 			<div data-role="header" data-position="fixed">
-				<a href="" id="logout-btn" class="ui-btn-left" data-ajax="false">Logout</a>
-				<h1>Account</h1>
+				<h1>Book Parking</h1>
 			</div>
 	
 			<div data-role="content">
-				<h2>User Details</h2>
-				<form data-ajax="false" id="account-form">
-					<div id="response">The details of your account are as follows.</div>
-					<div data-role="fieldcontain">
-						<label for="name">Name:</label> <input class="required" id="name"
-							name="name" type="text" value="" />
+				<h2>Parking Details</h2>
+				<form data-ajax="false" id="book-form">
+					<div id="response"></div>
+					<div id="location-div" data-role="fieldcontain">
+    					<label for="location">Location:</label>
+    					<input type="search" name="location" id="location" value="" />
+					</div>
+					<div id="location-id-div" data-role="fieldcontain">
+						<label for="location-id">Location Id:</label> 
+						<input id="location-id" name="location-id" type="text" value="" />
 					</div>
 					<div data-role="fieldcontain">
-						<label for="mobile">Mobile:</label> <input class="readonly"
-							id="mobile" name="mobile" type="text" value="" readonly="readonly" />
+						<label for="days">Days:</label>
+						<input type="range" name="days" id="days" value="1" min="1" max="100" />	
 					</div>
 					<div data-role="fieldcontain">
-						<label for="email">Email:</label> <input class="required"
-							id="email" name="email" type="text" value="" />
-					</div>
-					<div data-role="fieldcontain">
-						<label for="password">Password:</label> <input class="required"
-							id="password" name="password" type="password" value="" />
+						<label for="vehicle" class="select">Vehicle:</label>
+						<select name="vehicle" id="vehicle">
+						   <option value="1">ABC 123</option>
+						   <option value="2">DEF 456</option>
+						</select>
 					</div>
 					<div class="ui-grid-a">
 						<div class="ui-block-a">
-							<input type="submit" data-inline="true" value="Update" id="submit" />
+							<input type="submit" data-inline="true" value="Book" id="submit" />
 						</div>
 					</div>
 				</form>
@@ -49,10 +51,10 @@
 			<div data-role="footer" data-id="footer" class="nav-icons" data-position="fixed">
 				<div data-role="navbar" class="nav-icons" data-grid="d">
 					<ul >
-						<li><a href="../pages/book.html" id="book" data-icon="custom">Book</a></li>
+						<li><a href="../pages/book.html" id="book" data-icon="custom" class="ui-btn-active">Book</a></li>
 						<li><a href="../pages/sessions.html" id="sessions" data-icon="custom">Sessions</a></li>
 						<li><a href="../pages/map.html" id="map" data-icon="custom">Map</a></li>
-						<li><a href="../pages/account.html" id="account" data-icon="custom" class="ui-btn-active">Account</a></li>
+						<li><a href="../pages/account.html" id="account" data-icon="custom">Account</a></li>
 						<li><a href="../pages/info.html" id="info" data-icon="custom">Info</a></li>
 					</ul>
 				</div>

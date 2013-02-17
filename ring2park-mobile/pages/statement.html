@@ -15,8 +15,6 @@
 	
 			<div data-role="header" data-position="fixed">
 				<h1>Parking</h1>
-				<a href="" data-icon="search" data-iconpos="notext" data-rel="dialog"
-					data-transition="fade">Search</a>
 			</div>
 	
 			<div data-role="content">
@@ -41,22 +39,20 @@
 					</div>
 					<div class="ui-grid-a">
 						<div class="ui-block-a">
-							<input type="submit" value="Back" id="back" />
-						</div>
-						<div class="ui-block-a">
-							<input type="submit" value="Book Again" id="submit" />
+							<input type="submit" value="Park Again" id="submit" />
 						</div>
 					</div>
 				</form>
 			</div>
 	
-			<div data-role="footer" data-id="footer" data-position="fixed">
-				<div data-role="navbar">
+			<div data-role="footer" data-id="footer" class="nav-icons" data-position="fixed">
+				<div data-role="navbar" class="nav-icons" data-grid="d">
 					<ul >
-						<li><a href="../pages/parking.html" class="ui-btn-active">Parking</a></li>
-						<li><a href="../pages/map.html">Map</a></li>
-						<li><a href="../pages/account.html">Account</a></li>
-						<li><a href="../pages/info.html">Info</a></li>
+						<li><a href="../pages/book.html" id="book" data-icon="custom">Book</a></li>
+						<li><a href="../pages/sessions.html" id="sessions" data-icon="custom">Sessions</a></li>
+						<li><a href="../pages/map.html" id="map" data-icon="custom">Map</a></li>
+						<li><a href="../pages/account.html" id="account" data-icon="custom">Account</a></li>
+						<li><a href="../pages/info.html" id="info" data-icon="custom">Info</a></li>
 					</ul>
 				</div>
 			</div>
