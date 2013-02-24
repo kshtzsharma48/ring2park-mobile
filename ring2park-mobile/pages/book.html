@@ -21,24 +21,29 @@
 				<h2>Parking Details</h2>
 				<form data-ajax="false" id="book-form">
 					<div id="response"></div>
-					<div id="location-div" data-role="fieldcontain">
-    					<label for="location">Location:</label>
-    					<input type="search" name="location" id="location" value="" />
+					<div id="location-div" data-role="fieldcontainer">
+    					<label for="location-name">Location Name:</label>
+    					<input type="search" name="location-name" id="location-name" value="" />
 					</div>
-					<div id="location-id-div" data-role="fieldcontain">
+					<div id="location-id-div" data-role="fieldcontainer">
 						<label for="location-id">Location Id:</label> 
-						<input id="location-id" name="location-id" type="text" value="" />
+						<select name="location-id" id="location-id"></select>
 					</div>
-					<div data-role="fieldcontain">
-						<label for="days">Days:</label>
+					<div data-role="fieldcontainer">
+						<label for="start-date">Start Date:</label>
+						<input type="date" name="start-date" id="start-date" />	
+					</div>
+					<div data-role="fieldcontainer">
+						<label for="days">Number of Days:</label>
 						<input type="range" name="days" id="days" value="1" min="1" max="100" />	
 					</div>
-					<div data-role="fieldcontain">
-						<label for="vehicle" class="select">Vehicle:</label>
-						<select name="vehicle" id="vehicle">
-						   <option value="1">ABC 123</option>
-						   <option value="2">DEF 456</option>
-						</select>
+					<div data-role="fieldcontainer">
+						<label for="vehicle-id" class="select">Vehicle:</label>
+						<select name="vehicle-id" id="vehicle-id"></select>
+					</div>
+					<div data-role="fieldcontainer">
+						<label for="card-id" class="select">Payment Card:</label>
+						<select name="card-id" id="card-id"></select>
 					</div>
 					<div class="ui-grid-a">
 						<div class="ui-block-a">

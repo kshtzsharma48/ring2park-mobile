@@ -38,11 +38,15 @@ $('#login-page').live('pageshow', function () {
 //booking page
 $('#book-page').live('pageshow', function () { 
 	
+	var id;
 	var query = $(this).data("url").split("?")[1];
-	var id = query.replace("id=","");
+	if (query)
+		id = query.replace("id=","");
+	else
+		id = "";
 	
 	if (id.length > 0) {
-		$('#location-id-div').hide();
+		//$('#location-id-div').hide();
 		
 		console.log("Booking parking for " + id);		
 		// construct url for getting parking location
@@ -62,9 +66,77 @@ $('#book-page').live('pageshow', function () {
 			}
 		});
 	} else {
-		$('#location-div').hide();
+		//$('#location-div').hide();
 		
-		console.log("Booking parking");
+		// get parking locations
+		var criteria = "";
+		//locationsUrl = baseUrl + '/locations/search.json?criteria=' + criteria;
+		locationsUrl = baseUrl + '/locations/find.json';
+		
+		$.ajax({
+			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+			complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+			type: 'GET',  
+			url: locationsUrl,
+			dataType: 'json',
+			success: function (locations) {
+				// create drop down list
+				$.each(locations, function(i, location) {		
+					$("#location-id").append(
+						'<option value="' + location.id + '">' + location.name + ', ' + location.address + '</option>'
+					);
+				});
+			},
+			error: function (status) {
+				console.log("Error retrieving locations with criteria " + criteria);
+			}
+		});
+		
+		// get users vehicles
+		vehiclesUrl = baseUrl + '/vehicles/' + localStorage.getItem('j_username') + '/view.json';
+		
+		$.ajax({
+			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+			complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+			type: 'GET',  
+			url: vehiclesUrl,
+			dataType: 'json',
+			success: function (vehicles) {
+				// create drop down list
+				$.each(vehicles, function(i, vehicle) {		
+					$("#vehicle-id").append(
+						'<option value="' + vehicle.id + '">' + vehicle.license + '</option>'
+					);
+				});
+			},
+			error: function (status) {
+				console.log("Error retrieving users vehicles.");
+			}
+		});
+		
+		// get users payment cards
+		cardsUrl = baseUrl + '/cards/' + localStorage.getItem('j_username') + '/view.json';
+		
+		$.ajax({
+			beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+			complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+			type: 'GET',  
+			url: cardsUrl,
+			dataType: 'json',
+			success: function (cards) {
+				// create drop down list
+				$.each(cards, function(i, card) {		
+					var aNumber = '************' + card.number.substring(11);
+					$("#card-id").append(
+						'<option value="' + card.id + '">' + card.type + ' ' + aNumber + '</option>'
+					);
+				});
+			},
+			error: function (status) {
+				console.log("Error retrieving users vehicles.");
+			}
+		});
+
 	}
 	
 });
@@ -72,7 +144,7 @@ $('#book-page').live('pageshow', function () {
 $('#sessions-page').live('pageshow', function () { 
 	
 	// construct url for viewing bookings
-	viewUrl = baseUrl + '/statements/' + localStorage.getItem('j_username') + '/view.json';
+	viewUrl = baseUrl + '/bookings/' + localStorage.getItem('j_username') + '/view.json';
 	
 	$.ajax({
 		beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
@@ -317,6 +389,47 @@ $(document).bind("pageinit", function() {
 		
 	});
 	
+	// bind an event handler to the submit event of the booking form
+	$('#book-form').live('submit', function (e) {
+
+		if (e.handled !== true) {
+			//cache the form element for use in this function
+			var $this = $(this);
+
+			//prevent the default submission of the form
+			e.preventDefault();
+
+			// construct url for editing user
+			bookingUrl = baseUrl + '/bookings/' + localStorage.getItem('j_username') + '/add.json';
+			
+			//run an AJAX post request to server-side script, $this.serialize() is the data from the form
+			$.ajax({
+				beforeSend: function() { $.mobile.showPageLoadingMsg(); }, //show spinner
+				complete: function() { $.mobile.hidePageLoadingMsg(); }, //hide spinner
+				type: 'POST',  
+				url: bookingUrl,
+				data: $this.serialize(),
+				dataType: 'json',
+				success: function (booking) {
+					if (booking.id) {
+						// successful booking
+						console.log("Sucessfully created booking " + booking.id);
+						// TODO: show success dialog
+						$.mobile.changePage("pages/sessions.html", { transition: "slideup"} );
+					} else {
+						// failed booking
+						$('div#response').empty().append("<span class='error'>There was an error creating your booking.</span>");
+					}
+				}
+			});
+			
+		    e.handled = true;
+		}
+		
+		return false;
+		
+	});
+	
 	// bind an event handler to the submit event of the statement form
 	$('#statement-form').live('submit', function (e) {
 
@@ -344,7 +457,7 @@ $(document).bind("pageinit", function() {
 		e.preventDefault();
 		
 		$.mobile.changePage("../pages/book.html?id=", { transition: "slideup"} );
-		console.log("Parking again");
+		console.log("Booking again");
 		
 	});
 	
