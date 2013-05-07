@@ -1,6 +1,6 @@
 
 // base URL
-var baseUrl = 'http://10.0.1.14:8080';
+var baseUrl = 'http://10.0.1.13:8080';
 
 // viewport width and height
 var viewport = {
